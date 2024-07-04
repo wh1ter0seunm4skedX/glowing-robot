@@ -7,9 +7,11 @@ config = {
     'user': 'root',
     'password': 'rootpassword',
     'host': 'localhost',
-    'database': 'target_db',
-    'raise_on_warnings': True,
+    'database': 'target_db',  # Dynamically set based on user input
+    'raise_on_warnings': False,
+    'get_warnings': True,
 }
+
 
 def check_database_connection():
     """Check database connection"""
@@ -68,3 +70,27 @@ def list_databases():
     finally:
         if conn:
             close_connection(conn)
+
+
+def set_target_db(db_name):
+    """Set the target database"""
+    global config
+    config['database'] = db_name
+
+
+def initialize_db():
+    """Initialize the database connection"""
+    print(f"Connecting to {config['database']}")
+    conn = create_connection()
+    if conn:
+        close_connection(conn)
+        print(f"Connected to {config['database']} successfully.")
+    else:
+        print(f"Failed to connect to {config['database']}")
+
+
+# Example function to demonstrate the usage
+def get_connection():
+    """Get the database connection"""
+    print(f"Using database: {config['database']}")
+    return create_connection()

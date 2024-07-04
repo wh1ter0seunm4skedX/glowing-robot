@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Data Manipulation.iml" filepath="$PROJECT_DIR$/.idea/Data Manipulation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/MediaWikiDataTool.iml" filepath="$PROJECT_DIR$/.idea/MediaWikiDataTool.iml" />
     </modules>
   </component>
 </project>

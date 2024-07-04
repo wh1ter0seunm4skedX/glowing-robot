@@ -1,13 +1,13 @@
 from mysql.connector import Error
-from utils.database_utils import create_connection, close_connection
-
+from utils.database_utils import create_connection, close_connection, config
 
 def log_action(user, operation, details):
     """Log an action in the logs table."""
+    target_db = config['database']
     try:
-        conn = create_connection('target_db')
+        conn = create_connection(target_db)
         if not conn:
-            print(f"Failed to connect to the database: target_db")
+            print(f"Failed to connect to the database: {target_db}")
             return
 
         cursor = conn.cursor()
@@ -21,20 +21,3 @@ def log_action(user, operation, details):
     finally:
         if conn:
             close_connection(conn)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

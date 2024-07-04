@@ -1,16 +1,16 @@
 import json
 import os
-
-from utils.database_utils import create_connection, close_connection
+from utils.database_utils import create_connection, close_connection, config
 from mysql.connector import Error
 
 
 def fetch_all_page_titles():
     """Fetch all page titles from the all_pages table."""
+    target_db = config['database']
     try:
-        conn = create_connection('target_db')
+        conn = create_connection(target_db)
         if not conn:
-            print(f"Failed to connect to the database: target_db")
+            print(f"Failed to connect to the database: {target_db}")
             return []
 
         cursor = conn.cursor()
@@ -30,10 +30,11 @@ def fetch_all_page_titles():
 
 def fetch_page_text_by_id(page_id):
     """Fetch the page text by page_id from the all_pages table."""
+    target_db = config['database']
     try:
-        conn = create_connection('target_db')
+        conn = create_connection(target_db)
         if not conn:
-            print(f"Failed to connect to the database: target_db")
+            print(f"Failed to connect to the database: {target_db}")
             return None
 
         cursor = conn.cursor()
@@ -96,7 +97,8 @@ def check_if_view_exists_in_my_wiki():
             return False
 
         cursor = conn.cursor()
-        cursor.execute("SHOW FULL TABLES IN `my_wiki` WHERE TABLE_TYPE LIKE 'VIEW' AND TABLES_IN_my_wiki = 'latest_text_view'")
+        cursor.execute(
+            "SHOW FULL TABLES IN `my_wiki` WHERE TABLE_TYPE LIKE 'VIEW' AND TABLES_IN_my_wiki = 'latest_text_view'")
         view_exists = cursor.fetchone()
         if view_exists:
             print("'latest_text_view' exists in 'my_wiki'.")
@@ -114,31 +116,34 @@ def check_if_view_exists_in_my_wiki():
 
 
 def check_if_view_exists_in_target_db():
-    """Check if 'latest_text_view' exists in 'target_db'."""
+    """Check if 'latest_text_view' exists in the current target database."""
+    target_db = config['database']
     try:
-        conn = create_connection('target_db')
+        conn = create_connection(target_db)
         if not conn:
-            print("Failed to connect to the database: target_db")
+            print(f"Failed to connect to the database: {target_db}")
             return False
 
         cursor = conn.cursor()
-        cursor.execute("SHOW FULL TABLES IN `target_db` WHERE TABLE_TYPE LIKE 'VIEW' AND TABLES_IN_target_db = 'latest_text_view'")
+        cursor.execute(
+            f"SHOW FULL TABLES IN `{target_db}` WHERE TABLE_TYPE LIKE 'VIEW' AND TABLES_IN_{target_db} = 'latest_text_view'")
         view_exists = cursor.fetchone()
         if view_exists:
-            print("'latest_text_view' exists in 'target_db'.")
+            print(f"'latest_text_view' exists in {target_db}.")
             return True
         else:
-            print("'latest_text_view' does not exist in 'target_db'.")
+            print(f"'latest_text_view' does not exist in {target_db}.")
             return False
 
     except Error as e:
-        print(f"Error checking view existence in target_db: {e}")
+        print(f"Error checking view existence in {target_db}: {e}")
         return False
     finally:
         if conn:
             close_connection(conn)
 
 
+'''
 def export_view_as_sql_file(view_name, database, file_path):
     """Export 'latest_text_view' as SQL file if exists in the given database."""
     try:
@@ -165,3 +170,4 @@ def export_view_as_sql_file(view_name, database, file_path):
     finally:
         if conn:
             close_connection(conn)
+'''
