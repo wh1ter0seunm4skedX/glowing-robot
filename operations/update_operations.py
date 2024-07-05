@@ -1,7 +1,7 @@
 from operations.create_operations import create_all_pages_table
 from operations.logs import log_action
 from operations.read_operations import get_mediawiki_base_url
-from operations.text_processing import parse_database_text, parse_wikitext_to_clean_text, extract_text_between_big_tags
+from utils.text_processing import parse_database_text, parse_wikitext_to_clean_text, extract_text_between_big_tags
 from utils.database_utils import create_connection, close_connection, config
 from mysql.connector import Error
 

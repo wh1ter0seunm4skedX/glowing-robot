@@ -29,7 +29,7 @@ from menus.submenu import (
     show_update_operations_menu,
     show_delete_operations_menu
 )
-from operations.text_processing import parse_database_text
+from utils.text_processing import parse_database_text
 
 def choose_environment():
     print("Choose the environment you want to work on:")

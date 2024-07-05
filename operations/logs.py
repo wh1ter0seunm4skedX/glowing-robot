@@ -1,6 +1,7 @@
 from mysql.connector import Error
 from utils.database_utils import create_connection, close_connection, config
 
+
 def log_action(user, operation, details):
     """Log an action in the logs table."""
     target_db = config['database']

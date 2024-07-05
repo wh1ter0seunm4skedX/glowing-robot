@@ -129,6 +129,7 @@ def check_and_create_view_in_my_wiki(user):
         if conn:
             close_connection(conn)
 
+
 def check_and_create_view_in_target_db(user):
     """Check if 'latest_text_view' exists in the current target database, create if it does not exist."""
     target_db = config['database']
@@ -153,6 +154,7 @@ def check_and_create_view_in_target_db(user):
     finally:
         if conn:
             close_connection(conn)
+
 
 def create_view_in_target_db(user, source_db=None):
     """Create or replace the latest_text_view view in the current target database."""

@@ -2,6 +2,7 @@ from operations.logs import log_action
 from utils.database_utils import create_connection, close_connection
 from mysql.connector import Error
 
+
 def remove_table(user, database, table_name):
     """Remove a table from a database"""
     try:

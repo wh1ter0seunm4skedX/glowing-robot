@@ -1,5 +1,8 @@
+from menus.ascii_art import intro_ascii
+
+
 def show_main_menu():
-    print("\nMain Menu")
+    print(intro_ascii)
     print("1. Create Operations")
     print("2. Read Operations")
     print("3. Update Operations")
