@@ -72,6 +72,7 @@ def show_random_pages():
     for page_id, title in pages:
         print(f"Page ID: {page_id}, Title: {title}")
 
+
 def select_page_and_summarize():
     pages = fetch_random_pages()
     if not pages:
