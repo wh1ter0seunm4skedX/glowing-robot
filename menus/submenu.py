@@ -1,8 +1,9 @@
+from menus.ascii_art import create_ascii, read_ascii, update_ascii, delete_ascii
 from utils.database_utils import config
 
 
 def show_create_operations_menu():
-    print("\nCreate Operations Menu")
+    print(create_ascii)
     print("1. Create 'logs' table")
     print("2. Create 'raw_page_data' table")
     print("3. Create 'summaries' table")
@@ -14,7 +15,7 @@ def show_create_operations_menu():
 
 
 def show_read_operations_menu():
-    print("\nRead Operations Menu")
+    print(read_ascii)
     print("1. List all page titles")
     print("2. Make real-time summary of specific page")
     print("3. Back to Main Menu")
@@ -25,7 +26,7 @@ def show_read_operations_menu():
 
 def show_update_operations_menu():
     current_db = config['database']
-    print("\nUpdate Operations Menu")
+    print(update_ascii)
     print("1. Copy and convert data from 'raw_page_data' to 'pages'")
     print(f"2. Import data from CSV file into 'raw_page_data'")
     print("3. Update a random page summary")
@@ -38,7 +39,7 @@ def show_update_operations_menu():
 
 def show_delete_operations_menu():
     current_db = config['database']
-    print("\nDelete Operations Menu")
+    print(delete_ascii)
     print(f"1. Remove a table from {current_db} database")
     print("2. Back to Main Menu")
     choice = input("Enter your choice: ")
