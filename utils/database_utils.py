@@ -27,12 +27,14 @@ def check_database_connection():
         return False
 
 
-def create_connection(database=None):
+def create_connection(database=None, allow_local_infile=False):
     """Create a database connection"""
     try:
         conn_config = config.copy()
         if database:
             conn_config['database'] = database
+        if allow_local_infile:
+            conn_config['allow_local_infile'] = allow_local_infile
         conn = mysql.connector.connect(**conn_config)
         return conn
     except mysql.connector.Error as e:

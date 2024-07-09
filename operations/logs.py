@@ -12,7 +12,7 @@ def log_action(user, operation, details):
             return
 
         cursor = conn.cursor()
-        insert_sql = "INSERT INTO logs (user, operation, details) VALUES (%s, %s, %s)"
+        insert_sql = "INSERT INTO logs (username, operation, details) VALUES (%s, %s, %s)"
         cursor.execute(insert_sql, (user, operation, details))
         conn.commit()
         print(f"Logged action: {operation} by {user}")
