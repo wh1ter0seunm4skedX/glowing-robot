@@ -1,4 +1,10 @@
 import sys
+import os
+
+# Suppress TensorFlow warnings
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+
 from utils.database_utils import check_database_connection, set_target_db, initialize_db, config
 from operations.create_operations import (
     create_summaries_table,

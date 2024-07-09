@@ -5,10 +5,8 @@ from mysql.connector import Error
 from operations.summarization import summarize_text
 import time
 
-
 def get_mediawiki_base_url():
     return 'https://bo-botpress.bezeqonline.corp/'
-
 
 def fetch_page_titles():
     """Fetch all page titles from the pages table."""
@@ -83,9 +81,9 @@ def select_page_and_summarize():
         print(f"Page ID: {page_id}, Title: {title}")
 
     while True:
-        user_input = input("\nEnter the ID of the page you want to summarize (or type 'exit' to quit): ")
-        if user_input.lower() == 'exit':
-            print("Exiting program. Goodbye.")
+        user_input = input("\nEnter the ID of the page you want to summarize (or type 'done' to quit): ")
+        if user_input.lower() == 'done':
+            print("Going up...")
             break
 
         try:
