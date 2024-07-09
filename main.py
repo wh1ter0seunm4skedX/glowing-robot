@@ -7,7 +7,7 @@ from operations.create_operations import (
     create_pages_table
 )
 from operations.read_operations import (
-    fetch_page_titles
+    fetch_page_titles, select_page_and_summarize
 )
 from operations.update_operations import (
     copy_n_convert, import_csv_to_raw_page_data
@@ -22,7 +22,6 @@ from menus.submenu import (
     show_update_operations_menu,
     show_delete_operations_menu
 )
-from utils.text_processing import parse_database_text
 
 
 def choose_environment():
@@ -93,6 +92,8 @@ def handle_read_operations(user):
                 for i, (page_id, title) in enumerate(titles):
                     print(f"{i + 1}. Page ID: {page_id}, Title: {title}")
         elif choice == '2':
+            select_page_and_summarize()
+        elif choice == '3':
             break
         else:
             print("Invalid choice. Please try again.")
@@ -110,7 +111,6 @@ def handle_update_operations(user):
             break
         else:
             print("Invalid choice. Please try again.")
-
 
 
 def handle_delete_operations(user):

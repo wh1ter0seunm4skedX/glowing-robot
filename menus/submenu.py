@@ -1,5 +1,6 @@
 from utils.database_utils import config
 
+
 def show_create_operations_menu():
     print("\nCreate Operations Menu")
     print("1. Create 'logs' table")
@@ -13,10 +14,10 @@ def show_create_operations_menu():
 
 
 def show_read_operations_menu():
-    current_db = config['database']
     print("\nRead Operations Menu")
-    print("1. Fetch all page titles from 'pages'")
-    print("2. Back to Main Menu")
+    print("1. List all page titles")
+    print("2. Make real-time summary of specific page")
+    print("3. Back to Main Menu")
     choice = input("Enter your choice: ")
     print("")
     return choice
