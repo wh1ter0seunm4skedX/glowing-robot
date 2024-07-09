@@ -29,7 +29,8 @@ def show_update_operations_menu():
     print("1. Copy and convert data from 'raw_page_data' to 'pages'")
     print(f"2. Import data from CSV file into 'raw_page_data'")
     print("3. Update a random page summary")
-    print("4. Back to Main Menu")
+    print("4. Update a specific page by ID")
+    print("5. Back to Main Menu")
     choice = input("Enter your choice: ")
     print("")
     return choice

@@ -202,3 +202,66 @@ def random_page_summary_update(user):
     finally:
         if conn:
             close_connection(conn)
+
+
+def select_page_summary_update(user):
+    target_db = config['database']
+    try:
+        conn = create_connection(target_db)
+        if not conn:
+            print(f"Failed to connect to the database: {target_db}")
+            log_action(user, "select_page_summary_update", "Failed to connect to the database")
+            return
+
+        cursor = conn.cursor()
+
+        while True:
+            user_input = input("\nEnter the ID of the page you want to summarize (or type 'back' to return): ")
+            if user_input.lower() == 'back':
+                print("Going back to the previous menu...")
+                break
+
+            try:
+                page_id = int(user_input)
+
+                # Check if the page exists in the pages table
+                cursor.execute("SELECT clean_text FROM pages WHERE id = %s", (page_id,))
+                page = cursor.fetchone()
+                if not page:
+                    print("Page not found. Please enter a valid page ID.")
+                    continue
+
+                clean_text = page[0]
+
+                # Generate summary
+                print("Summarization process started...")
+                summary = summarize_text(clean_text)
+                print("Summarization process ended.")
+
+                # Insert new entry in summaries table
+                insert_summary_sql = """
+                INSERT INTO summaries (page_id, sum_text, sum_quality, sum_update_time, latest_reviewer, latest_approve_time)
+                VALUES (%s, %s, 5, NOW(), %s, NOW())
+                """
+                cursor.execute(insert_summary_sql, (page_id, summary, user))
+
+                # Update the same entry in the pages table with the summary text
+                update_pages_sql = "UPDATE pages SET sum_text = %s WHERE id = %s"
+                cursor.execute(update_pages_sql, (summary, page_id))
+
+                conn.commit()
+
+                print(f"Summary for page ID {page_id} has been updated.")
+                log_action(user, "select_page_summary_update", f"Summary for page ID {page_id} has been updated")
+                break
+
+            except ValueError:
+                print("Invalid input. Please enter a valid ID.")
+
+    except Error as e:
+        print(f"Error: {e}")
+        log_action(user, "select_page_summary_update", f"Error: {e}")
+    finally:
+        if conn:
+            close_connection(conn)
+
