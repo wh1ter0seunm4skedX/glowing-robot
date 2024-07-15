@@ -1,4 +1,5 @@
 import os
+from colorama import Fore, Style, init
 from operations.logs import log_action
 from operations.read_operations import get_mediawiki_base_url
 from utils.text_processing import parse_database_text, parse_wikitext_to_clean_text
@@ -6,6 +7,11 @@ from utils.database_utils import create_connection, close_connection, config
 from mysql.connector import Error
 from operations.summarization import summarize_text
 from datetime import datetime
+import time
+import sys
+import threading
+
+init(autoreset=True)
 
 
 # Example usage
@@ -265,3 +271,95 @@ def select_page_summary_update(user):
         if conn:
             close_connection(conn)
 
+
+def countdown(t):
+    """Countdown timer that can be aborted by pressing any key."""
+    print("Starting in 5 seconds... Press any key to abort.")
+    for i in range(t, 0, -1):
+        print(f"Starting in {i} seconds... Press any key to abort.", end='\r')
+        time.sleep(1)
+        if stop_timer_event.is_set():
+            print("Job start aborted.")
+            return
+    print("Starting summarization job now...", end='\r')
+
+
+def listen_for_abort():
+    """Listen for a key press to abort the timer."""
+    input()
+    stop_timer_event.set()
+
+
+def summarize_all_entries(user):
+    """Summarize all entries in the pages table and log the process."""
+    global stop_timer_event
+    stop_timer_event = threading.Event()
+
+# Start the countdown timer and listen for key press
+    timer_thread = threading.Thread(target=countdown, args=(5,))
+    listener_thread = threading.Thread(target=listen_for_abort)
+    timer_thread.start()
+    listener_thread.start()
+
+    # Wait for the timer to complete or be aborted
+    timer_thread.join()
+
+    if stop_timer_event.is_set():
+        return
+
+    target_db = config['database']
+    try:
+        conn = create_connection(target_db)
+        if not conn:
+            print(Fore.RED + f"Failed to connect to the database: {target_db}")
+            log_action(user, "summarize_all_entries", "Failed to connect to the database")
+            return
+
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id, clean_text FROM pages")
+        entries = cursor.fetchall()
+
+        total_entries = len(entries)
+        passed_entries = 0
+        failed_entries = 0
+
+        for entry in entries:
+            page_id = entry['id']
+            clean_text = entry['clean_text']
+            try:
+                summary = summarize_text(clean_text)
+
+                # Insert new entry in summaries table
+                insert_summary_sql = """
+                INSERT INTO summaries (page_id, sum_text, sum_quality, sum_update_time, latest_reviewer, latest_approve_time)
+                VALUES (%s, %s, 5, NOW(), %s, NOW())
+                """
+                cursor.execute(insert_summary_sql, (page_id, summary, user))
+
+                # Update the same entry in the pages table with the summary text
+                update_pages_sql = "UPDATE pages SET sum_text = %s WHERE id = %s"
+                cursor.execute(update_pages_sql, (summary, page_id))
+
+                conn.commit()
+                print(Fore.GREEN + f"Successfully summarized entry ID: {page_id}")
+                passed_entries += 1
+            except Exception as e:
+                print(Fore.RED + f"Failed to summarize entry ID: {page_id}, Error: {e}")
+                failed_entries += 1
+
+            print(Style.BRIGHT + f"Entries left: {total_entries - (passed_entries + failed_entries)}, Passed: {passed_entries}, Failed: {failed_entries}")
+
+        log_message = f"Summarized {passed_entries} entries successfully, {failed_entries} entries failed."
+        log_action(user, "summarize_all_entries", log_message)
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        log_file_path = os.path.join(os.path.dirname(__file__), f"summarize_all_entries_log_{timestamp}.txt")
+        with open(log_file_path, 'w') as log_file:
+            log_file.write(log_message)
+
+    except Error as e:
+        print(Fore.RED + f"Error: {e}")
+        log_action(user, "summarize_all_entries", f"Error: {e}")
+    finally:
+        if conn:
+            close_connection(conn)

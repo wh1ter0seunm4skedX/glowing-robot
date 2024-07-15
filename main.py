@@ -16,7 +16,8 @@ from operations.read_operations import (
     fetch_page_titles, select_page_and_summarize
 )
 from operations.update_operations import (
-    copy_n_convert, import_csv_to_raw_page_data, random_page_summary_update, select_page_summary_update
+    copy_n_convert, import_csv_to_raw_page_data, random_page_summary_update, select_page_summary_update,
+    summarize_all_entries
 )
 from operations.delete_operations import (
     remove_table
@@ -118,6 +119,8 @@ def handle_update_operations(user):
         elif choice == '4':
             select_page_summary_update(user)
         elif choice == '5':
+            summarize_all_entries(user)
+        elif choice == '6':
             break
         else:
             print("Invalid choice. Please try again.")
